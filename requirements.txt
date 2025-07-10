@@ -1,0 +1,11 @@
+Flask
+gunicorn
+gspread
+pandas
+fpdf2
+qrcode
+Pillow
+Flask-SQLAlchemy
+python-dateutil
+cachetools
+whitenoise
