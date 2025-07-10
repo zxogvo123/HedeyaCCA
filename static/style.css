@@ -1,1 +1,793 @@
+/* الألوان والثيم المحسن */
+:root {
+    --bg-light: #f8fafc;
+    --bg-dark: #1a202c; /* لون خلفية أغمق ومتطور للوضع الليلي */
+    --primary-color: #38b2ac; /* تيل أنيق للزر الرئيسي/العناوين */
+    --primary-color-hover: #319795; /* لون تيل أغمق عند التمرير */
+    --secondary-color: #4299e1; /* أزرق محسن للروابط والعناوين الفرعية */
+    --accent-color: #ed8936; /* لون برتقالي للتأكيد */
+    --text-color-light: #2d3748; /* لون النص الأساسي في الوضع الفاتح */
+    --text-color-dark: #f7fafc; /* لون النص الفاتح للوضع الليلي */
+    --card-bg-light-glass: rgba(255, 255, 255, 0.25); /* خلفية زجاجية فاتحة محسنة */
+    --card-bg-dark-glass: rgba(45, 55, 72, 0.3); /* خلفية زجاجية داكنة محسنة */
+    --border-color-light: rgba(255, 255, 255, 0.4); /* حدود فاتحة شفافة محسنة */
+    --border-color-dark: rgba(255, 255, 255, 0.1); /* حدود داكنة شفافة محسنة */
+    --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.15); /* ظل أوسع وأكثر نعومة للزجاج */
+    --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.4); /* ظل أغمق للزجاج */
+    --input-bg-light: rgba(255, 255, 255, 0.35); /* خلفية حقول الإدخال شفافة محسنة */
+    --input-bg-dark: rgba(74, 85, 104, 0.4); /* خلفية حقول الإدخال شفافة داكنة محسنة */
+    --input-border-light: rgba(203, 213, 224, 0.5);
+    --input-border-dark: rgba(113, 128, 150, 0.4);
+    --button-bg-light: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    --button-bg-dark: linear-gradient(135deg, var(--primary-color-hover), var(--secondary-color));
+    --button-text-light: white;
+    --button-text-dark: white;
 
+    /* ألوان إضافية للتركيز والتتمييز */
+    --focus-ring-color: rgba(56, 178, 172, 0.4); /* تيل فاتح لحالة التركيز */
+    --error-color: #f56565;
+    --success-color: #48bb78;
+    --warning-color: #ed8936;
+    
+    /* متغيرات جديدة للتحسينات */
+    --glow-color: rgba(56, 178, 172, 0.3);
+    --hover-glow: rgba(56, 178, 172, 0.5);
+}
+
+/* تنسيقات شريط التمرير */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-hover);
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: var(--primary-color-hover);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--bg-light); /* هذا اللون سيكون خلف الصورة والتدرج */
+    color: var(--text-color-light);
+    margin: 0;
+    padding: 0;
+    padding-bottom: 70px; /* مسافة للفوتر الثابت */
+    transition: background-color 0.4s ease, color 0.4s ease; /* إزالة transition لصورة الخلفية لأنها ثابتة */
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+
+    /* --- تنسيقات صورة الخلفية --- */
+    background-image: url('../static/background_image.jpg'); /* **استبدل background_image.jpg باسم ملف صورتك** */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-blend-mode: multiply; /* لمزج الصورة مع لون الخلفية الأساسي */
+    
+    /* تحسينات للمس والـ mobile */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* تحسين صورة الخلفية للـ mobile */
+@media (max-width: 768px) {
+    body {
+        background-attachment: scroll; /* تحسين الأداء على الهواتف */
+    }
+}
+
+/* خلفية متدرجة متحركة محسنة */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(
+        -45deg, 
+        rgba(56, 178, 172, 0.3), 
+        rgba(66, 153, 225, 0.3), 
+        rgba(237, 137, 54, 0.2), 
+        rgba(72, 187, 120, 0.3),
+        rgba(159, 122, 234, 0.2)
+    );
+    background-size: 400% 400%;
+    animation: gradient-flow 20s ease infinite;
+    z-index: -1;
+    opacity: 1;
+}
+
+body.dark-mode::before {
+    background: linear-gradient(
+        -45deg, 
+        rgba(26, 32, 44, 0.7), 
+        rgba(45, 55, 72, 0.6), 
+        rgba(74, 85, 104, 0.5), 
+        rgba(113, 128, 150, 0.4),
+        rgba(203, 213, 224, 0.2)
+    );
+    background-size: 400% 400%;
+    animation: gradient-flow 20s ease infinite;
+    opacity: 1;
+}
+
+@keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 50% 100%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px var(--glow-color); }
+    50% { box-shadow: 0 0 40px var(--hover-glow); }
+}
+
+@keyframes scale-in {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* وضع Dark Mode */
+body.dark-mode {
+    background-color: var(--bg-dark);
+    color: var(--text-color-dark);
+}
+
+/* --- حركات الدخول --- */
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.container {
+    background: var(--card-bg-light-glass);
+    border-radius: 20px;
+    box-shadow: var(--shadow-light);
+    padding: 35px;
+    margin: 40px auto 40px auto;
+    width: 100%;
+    max-width: 850px;
+    box-sizing: border-box;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid var(--border-color-light);
+    position: relative;
+    
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    animation: slideInFromBottom 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+    animation-delay: 0.2s;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: source-out;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+body.dark-mode .container {
+    background-color: var(--card-bg-dark-glass); /* خلفية زجاجية داكنة */
+    box-shadow: var(--shadow-dark);
+    border-color: var(--border-color-dark);
+}
+
+/* الرأس */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+body.dark-mode .header {
+    border-color: var(--border-color-dark);
+}
+
+.header h1 {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.8em;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    text-shadow: 0 4px 8px rgba(56, 178, 172, 0.3);
+    animation: floating 3s ease-in-out infinite;
+    position: relative;
+}
+
+.header h1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    border-radius: 10px;
+    filter: blur(20px);
+    opacity: 0.2;
+    z-index: -1;
+}
+
+body.dark-mode .header h1 {
+    color: var(--primary-color-hover);
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.1);
+}
+
+.header h1 .fas {
+    font-size: 1em;
+}
+
+/* رسائل الفلاش */
+.flash-messages {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    font-weight: 500;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
+/* نموذج البحث */
+.search-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+}
+
+.search-form input[type="text"],
+.search-form select {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 15px;
+    border: 1px solid var(--input-border-light);
+    border-radius: 8px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+    background-color: var(--input-bg-light); /* خلفية شفافة */
+    color: var(--text-color-light);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .search-form input[type="text"],
+body.dark-mode .search-form select {
+    background-color: var(--input-bg-dark); /* خلفية شفافة داكنة */
+    color: var(--text-color-dark);
+    border-color: var(--input-border-dark);
+}
+
+/* تحسين حالة التركيز */
+.search-form input[type="text"]:focus,
+.search-form select:focus,
+.auth-form input[type="text"]:focus,
+.auth-form input[type="password"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--focus-ring-color), 0 0 20px rgba(56, 178, 172, 0.3);
+    outline: none;
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .search-form input[type="text"]:focus,
+body.dark-mode .search-form select:focus,
+body.dark-mode .auth-form input[type="text"]:focus,
+body.dark-mode .auth-form input[type="password"]:focus {
+    background: rgba(74, 85, 104, 0.6);
+    box-shadow: 0 0 0 4px var(--focus-ring-color), 0 0 20px rgba(56, 178, 172, 0.4);
+}
+
+.search-form button[type="submit"]:focus-visible,
+.action-btn:focus-visible,
+.export-csv-btn:focus-visible,
+.theme-toggle-btn:focus-visible,
+.logout-btn:focus-visible,
+.footer-link:focus-visible,
+.auth-button:focus-visible,
+.password-toggle-btn:focus-visible {
+    box-shadow: 0 0 0 4px var(--focus-ring-color);
+    outline: none;
+}
+
+
+.search-form button[type="submit"] {
+    padding: 14px 30px;
+    background: var(--button-bg-light);
+    color: var(--button-text-light);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(56, 178, 172, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-form button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.search-form button[type="submit"]:hover::before {
+    left: 100%;
+}
+
+body.dark-mode .search-form button[type="submit"] {
+    background-color: var(--button-bg-dark);
+}
+
+.search-form button[type="submit"]:hover {
+    background: linear-gradient(135deg, var(--primary-color-hover), var(--secondary-color));
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(56, 178, 172, 0.5);
+}
+
+.search-form button[type="submit"]:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 0 4px 15px rgba(56, 178, 172, 0.3);
+}
+
+/* زر مسح حقل البحث */
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+#clear-search-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.1em;
+    cursor: pointer;
+    display: none;
+    transition: color 0.2s ease;
+    padding: 5px;
+    line-height: 1;
+}
+
+#clear-search-btn:hover {
+    color: #666;
+}
+
+body.dark-mode #clear-search-btn {
+    color: #ccc;
+}
+body.dark-mode #clear-search-btn:hover {
+    color: #eee;
+}
+
+
+/* منطقة النتائج */
+.results-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color-light);
+}
+
+body.dark-mode .results-container {
+    border-color: var(--border-color-dark);
+}
+
+.results-container h2 {
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .results-container h2 {
+    color: #66b3ff;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.05);
+}
+
+/* بطاقة الفاتورة */
+.invoice-card {
+    background: var(--card-bg-light-glass);
+    border: 2px solid var(--border-color-light);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: scale-in 0.5s ease-out;
+}
+
+.invoice-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.invoice-card:hover::before {
+    transform: scaleX(1);
+}
+
+body.dark-mode .invoice-card {
+    background-color: var(--card-bg-dark-glass); /* خلفية زجاجية داكنة */
+    border-color: var(--border-color-dark);
+    box-shadow: var(--shadow-dark);
+}
+
+.invoice-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(56, 178, 172, 0.2);
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.35);
+}
+
+body.dark-mode .invoice-card:hover {
+    box-shadow: 0 15px 40px rgba(56, 178, 172, 0.3);
+    border-color: var(--primary-color-hover);
+    background: rgba(45, 55, 72, 0.4);
+}
+
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color-light);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+body.dark-mode .invoice-header {
+    border-color: var(--border-color-dark);
+}
+
+.invoice-header h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .invoice-header h3 {
+    color: var(--primary-color-hover);
+    text-shadow: 0 1px 1px rgba(255,255,255,0.05);
+}
+
+.invoice-body p {
+    margin: 8px 0;
+    font-size: 1.05em;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 400;
+}
+
+.invoice-body p strong {
+    color: var(--header-color);
+    min-width: 150px;
+    font-weight: 500;
+}
+
+body.dark-mode .invoice-body p strong {
+    color: var(--text-color-dark);
+}
+
+.invoice-body p .fas {
+    color: var(--secondary-color);
+    font-size: 0.9em;
+}
+
+body.dark-mode .invoice-body p .fas {
+    color: #66b3ff;
+}
+
+/* تنسيق خاص للمبلغ الإجمالي */
+.invoice-body p strong + span {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+body.dark-mode .invoice-body p strong + span {
+    color: var(--primary-color-hover);
+    text-shadow: 0 0 8px rgba(133, 209, 137, 0.4);
+}
+
+
+.invoice-body ul {
+    list-style-type: none;
+    padding-right: 20px;
+    margin: 5px 0 10px 0;
+}
+
+.invoice-body ul li {
+    background-color: rgba(0, 123, 255, 0.05);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 0.95em;
+    border-right: 3px solid var(--secondary-color);
+    font-weight: 400;
+}
+
+body.dark-mode .invoice-body ul li {
+    background-color: rgba(102, 179, 255, 0.1);
+    border-color: #66b3ff;
+}
+
+/* أزرار الإجراءات داخل البطاقة */
+.invoice-actions .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2em;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.invoice-actions .action-btn.pdf {
+    background-color: #dc3545;
+}
+
+.invoice-actions .action-btn.pdf:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* زر تصدير CSV (أسفل النتائج) */
+.export-csv-btn {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0;
+    padding: 12px 25px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05em;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.export-csv-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.export-csv-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* لا توجد نتائج */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--card-bg-light-glass); /* خلفية زجاجية */
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    color: var(--text-color-light);
+    font-size: 1.2em;
+    font-weight: 500;
+    border: 1px solid var(--border-color-light);
+    
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+body.dark-mode .no-results {
+    background-color: var(--card-bg-dark-glass);
+    box-shadow: var(--shadow-dark);
+    border-color: var(--border-color-dark);
+    color: var(--text-color-dark);
+}
+
+.no-results .fas {
+    font-size: 3em;
+    color: #ffc107;
+    margin-bottom: 15px;
+}
+
+/* زر تبديل الثيم (Dark Mode) وزر الخروج */
+.user-info {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.theme-toggle-btn, .logout-btn {
+    background: var(--card-bg-light-glass);
+    border: 2px solid var(--border-color-light);
+    font-size: 1.3em;
+    cursor: pointer;
+    color: var(--text-color-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-light);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    
+    /* تحسينات للـ mobile/touch */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.theme-toggle-btn::before, .logout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+body.dark-mode .theme-toggle-btn, body.dark-mode .logout-btn {
+    color: var(--text-color-dark);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-btn:hover {
+    color: white;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(56, 178, 172, 0.4);
+}
+
+.theme-toggle-btn:hover::before {
+    opacity: 1;
+}
+
+body.dark-mode .theme-toggle-btn:hover {
+    color: white;
+    box-shadow: 0 8px 25px rgba(56, 178, 172, 0.6);
+}
+
+.logout-btn:hover {
+    co
