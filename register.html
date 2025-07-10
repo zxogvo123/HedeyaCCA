@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>تسجيل مستخدم جديد</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+{# التعديل هنا: إضافة initial_theme إلى class للـ body #}
+<body class="{{ 'dark-mode' if initial_theme == 'dark' else '' }}">
+    <div class="container login-container">
+        <div class="header">
+            <h1><i class="fas fa-user-plus"></i> تسجيل مستخدم جديد</h1>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {% if category == 'error' %}<i class="fas fa-times-circle"></i>{% endif %}
+                            {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="auth-form">
+            <div class="input-group">
+                <label for="username"><i class="fas fa-user"></i> اسم المستخدم:</label>
+                <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+            </div>
+            <div class="input-group">
+                <label for="password"><i class="fas fa-lock"></i> كلمة المرور:</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="password" name="password" required autocomplete="new-password">
+                    <button type="button" id="toggleRegisterPassword" class="password-toggle-btn" title="إظهار/إخفاء كلمة المرور">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="confirm_password"><i class="fas fa-lock"></i> تأكيد كلمة المرور:</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password">
+                    <button type="button" id="toggleConfirmPassword" class="password-toggle-btn" title="إظهار/إخفاء كلمة المرور">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="auth-button">تسجيل</button>
+        </form>
+        <p class="auth-link-text">لديك حساب بالفعل؟ <a href="{{ url_for('login_page') }}" class="auth-link">سجل الدخول</a></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='login_register_script.js') }}"></script>
+</body>
+</html>
