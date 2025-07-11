@@ -1,0 +1,13 @@
+name: Wake Up App
+
+on:
+  schedule:
+    # يعمل كل 20 دقيقة
+    - cron: '*/20 * * * *'
+
+jobs:
+  wake-up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send HTTP Request to wake up the app
+        run: curl -s https://2822e449-6f8e-4cb1-9e0b-58e3c9b0dd55-00-3d9jw7wyw7e9r.worf.replit.dev/login
