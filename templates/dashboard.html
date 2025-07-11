@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم المتقدمة</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{{ url_for('home') }}">نظام الفواتير</a>
+        </div>
+        <div class="navbar-links">
+            <button id="theme-toggle" class="theme-toggle-btn" title="تبديل الوضع الليلي">
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="{{ url_for('advanced_search') }}"><i class="fas fa-filter"></i> البحث المتقدم</a>
+            <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chart-line"></i> لوحة التحكم المتقدمة</h1>
+        </div>
+
+        {% if stats %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <div class="stat-value">{{ stats.total_revenue }}</div>
+                <div class="stat-label">إجمالي الإيرادات</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-receipt"></i>
+                <div class="stat-value">{{ stats.total_invoices }}</div>
+                <div class="stat-label">إجمالي الفواتير</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calculator"></i>
+                <div class="stat-value">{{ stats.avg_invoice }}</div>
+                <div class="stat-label">متوسط قيمة الفاتورة</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar-day"></i>
+                <div class="stat-value">{{ stats.today_revenue }}</div>
+                <div class="stat-label">إيرادات اليوم</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="analytics-section">
+            <div class="analytics-main">
+                 {% if top_customers %}
+                <div class="customers-container">
+                     <div class="chart-title"><i class="fas fa-users"></i> تحليل أفضل العملاء</div>
+                     <div class="customers-grid">
+                        {% for customer in top_customers %}
+                        <div class="customer-card">
+                            <div class="customer-header">
+                                <div class="customer-rank">{{ loop.index }}</div>
+                                <div>
+                                    <div class="customer-name"><i class="fas fa-user"></i> {{ customer.name }}</div>
+                                    <div class="customer-phone"><i class="fas fa-phone"></i> {{ customer.phone }}</div>
+                                </div>
+                            </div>
+                            <div class="customer-stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ "%.2f"|format(customer.total_spent) }}</div>
+                                    <div class="stat-label">إجمالي الإنفاق</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ customer.visit_count }}</div>
+                                    <div class="stat-label">عدد الزيارات</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ customer.last_purchase_text }}</div>
+                                    <div class="stat-label">آخر شراء</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                     </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="analytics-sidebar">
+                <div class="top-items-section">
+                    <div class="chart-title">المنتجات الأكثر مبيعاً</div>
+                    <form action="{{ url_for('dashboard') }}" method="POST" class="time-filter-form">
+                        <select name="time_period" onchange="this.form.submit()">
+                            <option value="all" {% if selected_period == 'all' %}selected{% endif %}>كل الأوقات</option>
+                            <option value="day" {% if selected_period == 'day' %}selected{% endif %}>آخر 24 ساعة</option>
+                            <option value="week" {% if selected_period == 'week' %}selected{% endif %}>آخر أسبوع</option>
+                            <option value="2weeks" {% if selected_period == '2weeks' %}selected{% endif %}>آخر أسبوعين</option>
+                            <option value="month" {% if selected_period == 'month' %}selected{% endif %}>آخر شهر</option>
+                        </select>
+                    </form>
+
+                    <div class="top-items-list">
+                        {% if top_items %}
+                            {% for item in top_items %}
+                                <div class="item-card">
+                                    <div class="item-rank">{{ loop.index }}</div>
+                                    <div class="item-details">
+                                        <h4 class="item-description">{{ item['الوصف'] }}</h4>
+                                        <p class="item-code">كود: {{ item['كود القطعه'] }}</p>
+                                    </div>
+                                    <div class="item-quantity">{{ item['الكمية'] }} <span>قطعة</span></div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-results">لا توجد بيانات لهذه الفترة.</p>
+                        {% endif %}
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Dark mode toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    const themeIcon = themeToggle.querySelector('i');
+
+    // Load saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+    }
+
+    // Toggle theme function
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+});
+</script>
+</body>
+</html>

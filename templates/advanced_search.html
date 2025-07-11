@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#38b2ac">
+    <title>البحث المتقدم</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand"><a href="{{ url_for('home') }}">نظام الفواتير</a></div>
+        <div class="navbar-links">
+            <a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-line"></i> لوحة التحكم</a>
+            <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> الرئيسية</a>
+        </div>
+    </nav>
+
+    <div class="container advanced-search-container">
+        <div class="header">
+            <h1><i class="fas fa-filter"></i> البحث المتقدم في الفواتير</h1>
+        </div>
+
+        <form action="{{ url_for('advanced_search') }}" method="POST">
+            <div class="search-filters">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label for="date_from">من تاريخ:</label>
+                        <input type="date" id="date_from" name="date_from" value="{{ search_params.get('date_from', '') }}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="date_to">إلى تاريخ:</label>
+                        <input type="date" id="date_to" name="date_to" value="{{ search_params.get('date_to', '') }}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="payment_method">طريقة الدفع:</label>
+                        <select id="payment_method" name="payment_method">
+                            <option value="all">الكل</option>
+                            {% for key, value in payment_methods.items() %}
+                                <option value="{{ key }}" {% if search_params.get('payment_method') == key %}selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="amount_min">أقل مبلغ:</label>
+                        <input type="number" id="amount_min" name="amount_min" step="0.01" value="{{ search_params.get('amount_min', '') }}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="amount_max">أعلى مبلغ:</label>
+                        <input type="number" id="amount_max" name="amount_max" step="0.01" value="{{ search_params.get('amount_max', '') }}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="customer_name">اسم العميل:</label>
+                        <input type="text" id="customer_name" name="customer_name" value="{{ search_params.get('customer_name', '') }}">
+                    </div>
+                     <div class="filter-group">
+                        <label for="cashier_name">اسم الكاشير:</label>
+                        <input type="text" id="cashier_name" name="cashier_name" value="{{ search_params.get('cashier_name', '') }}">
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top:20px;">
+                    <button type="submit" class="search-button"><i class="fas fa-search"></i> بحث</button>
+                </div>
+            </div>
+        </form>
+
+        {% if results is defined and results %}
+        <div class="results-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الفاتورة</th>
+                        <th>التاريخ</th>
+                        <th>المبلغ</th>
+                        <th>طريقة الدفع</th>
+                        <th>العميل</th>
+                        <th>الكاشير</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in results %}
+                    <tr>
+                        <td>{{ invoice.number }}</td>
+                        <td>{{ invoice.date }}</td>
+                        <td>{{ invoice.total_amount }}</td>
+                        <td>{{ invoice.payment_method }}</td>
+                        <td>{{ invoice.customer_name }}</td>
+                        <td>{{ invoice.cashier }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% elif request.method == 'POST' %}
+        <p class="no-results">لا توجد نتائج تطابق معايير البحث.</p>
+        {% endif %}
+    </div>
+
+    <!-- Footer للمصمم -->
+    <footer class="designer-footer">
+        <div class="footer-content">
+            <p><i class="fas fa-code"></i> تم تصميم وتطوير الموقع بواسطة</p>
+            <h3 class="designer-name">ESSAM MOSSAD</h3>
+            <p class="footer-subtitle"><i class="fas fa-phone"></i> 01149088771</p>
+        </div>
+    </footer>
+</body>
+</html>
