@@ -2,109 +2,91 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#38b2ac">
     <title>فواتير سيتي سنتر الماظة</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-{# التعديل هنا: إضافة initial_theme إلى class للـ body #}
 <body class="{{ 'dark-mode' if initial_theme == 'dark' else '' }}">
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{{ url_for('home') }}">نظام الفواتير</a>
+        </div>
+        <div class="navbar-links">
+            <button id="theme-toggle" class="theme-toggle-btn" title="تبديل الوضع الليلي">
+                <i class="fas fa-moon"></i>
+            </button>
+            {% if session.username %}
+                <span>مرحباً، {{ session.username }}</span>
+                {% if session.username.lower() == 'admin' %}
+                    <a href="{{ url_for('dashboard') }}"><i class="fas fa-chart-line"></i> لوحة التحكم</a>
+                    <a href="{{ url_for('advanced_search') }}"><i class="fas fa-filter"></i> البحث المتقدم</a>
+                    <a href="{{ url_for('register_page') }}"><i class="fas fa-user-plus"></i> إضافة مستخدم</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> خروج</a>
+            {% endif %}
+        </div>
+    </nav>
+
     <div class="container">
-        <div class="header">
-            <div class="user-info">
-                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <a href="{{ url_for('logout') }}" class="logout-btn" title="خروج من التطبيق">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
+        <!-- شاشة التحميل -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-content">
+                <img src="{{ url_for('static', filename='background_image.jpg') }}" alt="Hedeya Logo" class="loading-logo">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">مرحباً بكم في Hedeya</p>
             </div>
-            <h1><i class="fas fa-file-invoice-dollar"></i> فواتير سيتي سنتر الماظة</h1>
+        </div>
+        <div class="header">
+            <h1><i class="fas fa-file-invoice-dollar"></i> البحث عن فواتير</h1>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {% if category == 'error' %}<i class="fas fa-times-circle"></i>{% endif %}
-                            {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <form action="/search" method="POST" class="search-form" id="searchForm">
-            <div class="search-input-wrapper">
-                <input type="text" name="query" id="searchInput" placeholder="أدخل رقم الفاتورة أو الهاتف..." required value="{{ query or '' }}" autofocus>
-                <button type="button" id="clear-search-btn" title="مسح حقل البحث">
-                    <i class="fas fa-times"></i>
-                </button>
+        <form action="{{ url_for('search') }}" method="POST" class="search-form page-transition">
+            <div class="enhanced-input">
+                <input type="text" name="query" placeholder="أدخل رقم الفاتورة أو الهاتف..." required value="{{ query or '' }}" class="light-wave">
             </div>
-            <select name="search_type">
+            <select name="search_type" class="enhanced-input">
                 <option value="invoice" {% if search_type == 'invoice' %}selected{% endif %}>برقم الفاتورة</option>
                 <option value="phone" {% if search_type == 'phone' %}selected{% endif %}>برقم الهاتف</option>
             </select>
-            <button type="submit">
-                <i class="fas fa-search"></i>
-                <span id="search-text">بحث</span>
-            </button>
+            <div class="form-group offline-mode-group">
+                <label class="offline-checkbox">
+                    <input type="checkbox" name="offline_mode" value="true" {% if offline_mode %}checked{% endif %}>
+                    <span class="checkmark"></span>
+                    <i class="fas fa-wifi-slash pulse-effect"></i> العمل بدون إنترنت (استخدام البيانات المحلية)
+                </label>
+            </div>
+            <button type="submit" class="ripple-effect"><i class="fas fa-search"></i> بحث</button>
         </form>
 
-        <div class="results-container">
+        <div class="results-container fade-list">
             {% if results is defined %}
                 {% if results %}
-                    <h2>نتائج البحث عن: "{{ query }}"</h2>
+                     <h2 class="gradient-text glow-text">نتائج البحث عن: "{{ query }}"</h2>
                     {% for invoice in results %}
-                        <div class="invoice-card">
-                            <div class="invoice-header">
-                                <h3><i class="fas fa-receipt"></i> فاتورة رقم: {{ invoice.number }}</h3>
-                                <div class="invoice-actions">
-                                    {% if search_type == 'invoice' and pdf_invoice_number %}
-                                        <a href="{{ url_for('export_pdf', invoice_number=pdf_invoice_number) }}" class="action-btn pdf" title="تصدير PDF" target="_blank"><i class="fas fa-file-pdf"></i></a>
-                                    {% elif search_type == 'phone' %}
-                                        <a href="{{ url_for('export_pdf', invoice_number=invoice.number) }}" class="action-btn pdf" title="تصدير PDF" target="_blank"><i class="fas fa-file-pdf"></i></a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="invoice-body">
-                                <p><strong><i class="fas fa-calendar-alt"></i> التاريخ:</strong> {{ invoice.date }}</p>
-                                <p><strong><i class="fas fa-money-bill-wave"></i> المبلغ الإجمالي:</strong> <span>{{ invoice.total_amount }}</span></p>
-                                <p><strong><i class="fas fa-user-circle"></i> اسم العميل:</strong> {{ invoice.customer_name }}</p>
-                                <p><strong><i class="fas fa-phone"></i> رقم هاتف العميل:</strong> {{ invoice.customer_phone }}</p>
-                                <p><strong><i class="fas fa-cash-register"></i> الكاشير:</strong> {{ invoice.cashier }}</p>
-                                <p><strong><i class="fas fa-credit-card"></i> طريقة الدفع:</strong> {{ invoice.payment_method }}</p>
-                                {% if invoice.discount and invoice.discount != '0' %}
-                                    <p><strong><i class="fas fa-tags"></i> الخصم:</strong> {{ invoice.discount }}</p>
-                                {% endif %}
-                                {% if invoice.vat and invoice.vat != 'غير متوفر' %}
-                                    <p><strong><i class="fas fa-percent"></i> ضريبة القيمة المضافة:</strong> {{ invoice.vat }}</p>
-                                {% endif %}
-                                {% if invoice.tax_id and invoice.tax_id != 'غير متوفر' %}
-                                    <p><strong><i class="fas fa-id-badge"></i> الرقم الضريبي:</strong> {{ invoice.tax_id }}</p>
-                                {% endif %}
-                                {% if invoice.items_str and invoice.items_str != 'غير متوفر' %}
-                                    <p><strong><i class="fas fa-boxes"></i> المنتجات:</strong></p>
-                                    <ul>
-                                        {% for item in invoice.items_str.split('\n') %}
-                                            {% if item.strip() %}
-                                                <li>{{ item.strip() }}</li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
+                        <div class="invoice-card floating-card sparkle-effect ripple-effect zoom-in">
+                            <h3 class="gradient-text"><i class="fas fa-receipt pulse-effect"></i> فاتورة رقم: {{ invoice.number }}</h3>
+                            <p><strong><i class="fas fa-calendar-alt"></i> التاريخ:</strong> {{ invoice.date }}</p>
+                            <p><strong><i class="fas fa-money-bill-wave"></i> المبلغ:</strong> {{ invoice.total_amount }}</p>
+                            <p><strong><i class="fas fa-user-circle"></i> العميل:</strong> {{ invoice.customer_name }} ({{ invoice.customer_phone }})</p>
+                            <p><strong><i class="fas fa-cash-register"></i> الكاشير:</strong> {{ invoice.cashier }}</p>
+                            <p><strong><i class="fas fa-credit-card"></i> الدفع:</strong> {{ invoice.payment_method }}</p>
                         </div>
                     {% endfor %}
-                    <a href="{{ url_for('export_csv_results', query=query, search_type=search_type) }}" class="export-csv-btn">
-                        <i class="fas fa-file-csv"></i> تصدير كل النتائج إلى CSV
-                    </a>
                 {% else %}
                     <div class="no-results">
                         <i class="fas fa-exclamation-circle"></i>
@@ -115,142 +97,56 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <p>
-            تم الإنشاء بواسطة <span class="creator-name">Essam Mossad</span>
-            <i class="far fa-copyright"></i> 2025
-        </p>
+    <!-- Footer للمصمم -->
+    <footer class="designer-footer">
+        <div class="footer-content">
+            <p><i class="fas fa-code"></i> تم تصميم وتطوير الموقع بواسطة</p>
+            <h3 class="designer-name">ESSAM MOSSAD</h3>
+            <p class="footer-subtitle"><i class="fas fa-phone"></i> 01149088771</p>
+        </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='enhanced-animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='ripple-effect.js') }}"></script>
     <script>
-        // JavaScript محسن لتبديل الوضع الليلي/النهاري مع دعم أفضل للـ APK
-        
-        // دالة مساعدة لحفظ الثيم مع fallback للكوكيز
-        function saveTheme(theme) {
-            try {
-                localStorage.setItem('theme', theme);
-            } catch (e) {
-                // fallback للكوكيز إذا فشل localStorage
-                document.cookie = `theme=${theme}; path=/; max-age=31536000`;
-            }
+        // Dark mode toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // Load saved theme preference or default to light mode
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
         }
-        
-        // دالة مساعدة لقراءة الثيم مع fallback للكوكيز
-        function getTheme() {
-            try {
-                return localStorage.getItem('theme');
-            } catch (e) {
-                // fallback للكوكيز
-                const match = document.cookie.match(/theme=([^;]+)/);
-                return match ? match[1] : null;
-            }
-        }
-        
-        // تطبيق الثيم فوراً لتجنب الوميض
-        (function() {
-            const body = document.body;
-            const initialThemeFromFlask = body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
-            const savedTheme = getTheme();
-            const currentTheme = savedTheme || initialThemeFromFlask;
-            
-            if (currentTheme === 'dark-mode') {
-                body.classList.add('dark-mode');
+
+        // Toggle theme function with enhanced effects
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Add transition effect
+            themeToggle.style.transform = 'scale(1.2) rotate(180deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 300);
+
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
             } else {
-                body.classList.remove('dark-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
             }
-        })();
+        });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggle = document.getElementById('theme-toggle');
-            const body = document.body;
-
-            // قراءة التفضيل الأولي
-            let initialThemeFromFlask = body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
-            let savedTheme = getTheme();
-            let currentTheme = savedTheme || initialThemeFromFlask;
-
-            // تحديث أيقونة الزر بناءً على الحالة الحالية
-            function updateThemeIcon() {
-                if (!themeToggle) return;
-                const icon = themeToggle.querySelector('i');
-                if (body.classList.contains('dark-mode')) {
-                    icon.className = 'fas fa-sun';
-                } else {
-                    icon.className = 'fas fa-moon';
-                }
-            }
-
-            // تطبيق الثيم وتحديث الأيقونة
-            if (currentTheme === 'dark-mode') {
-                body.classList.add('dark-mode');
-            } else {
-                body.classList.remove('dark-mode');
-            }
-            updateThemeIcon();
-
-            // حفظ التفضيل إذا لم يكن محفوظاً مسبقاً
-            if (!savedTheme) {
-                saveTheme(initialThemeFromFlask);
-            }
-
-            // إضافة مستمع للحدث مع دعم أفضل للـ touch
-            if (themeToggle) {
-                function toggleTheme(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    if (body.classList.contains('dark-mode')) {
-                        body.classList.remove('dark-mode');
-                        saveTheme('light-mode');
-                    } else {
-                        body.classList.add('dark-mode');
-                        saveTheme('dark-mode');
-                    }
-                    updateThemeIcon();
-                }
-                
-                // دعم كل من click و touchstart للـ mobile
-                themeToggle.addEventListener('click', toggleTheme);
-                themeToggle.addEventListener('touchstart', function(e) {
-                    // منع double firing على الأجهزة المحمولة
-                    this.removeEventListener('click', toggleTheme);
-                    toggleTheme(e);
-                    setTimeout(() => {
-                        this.addEventListener('click', toggleTheme);
-                    }, 300);
-                });
-            }
-
-            // JavaScript لزر مسح حقل البحث
-            const searchInput = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clear-search-btn');
-
-            if (searchInput && clearBtn) {
-                const toggleClearBtn = () => {
-                    if (searchInput.value.length > 0) {
-                        clearBtn.style.display = 'block';
-                    } else {
-                        clearBtn.style.display = 'none';
-                    }
-                };
-                searchInput.addEventListener('input', toggleClearBtn);
-                clearBtn.addEventListener('click', () => {
-                    searchInput.value = '';
-                    toggleClearBtn();
-                    searchInput.focus();
-                });
-                
-                // دعم touch للـ mobile
-                clearBtn.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    searchInput.value = '';
-                    toggleClearBtn();
-                    searchInput.focus();
-                });
-                
-                toggleClearBtn();
-            }
+        // Enhanced loading animation - إطالة المدة إلى ثانيتين
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 2000); // بعد ثانيتين تظهر الصفحة
         });
     </script>
 </body>
