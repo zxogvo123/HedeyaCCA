@@ -1,0 +1,13 @@
+Flask
+Fla
+gspread
+pandas
+fpdf2
+qrcode
+Pillow
+cachetools
+werkzeug
+python-dateutil
+gunicorn
+flask-sqlalchemy
+fpdf
