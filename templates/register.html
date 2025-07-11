@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,18 +7,28 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>تسجيل مستخدم جديد</title>
+    <meta name="theme-color" content="#38b2ac">
+    <title>تسجيل جديد - نظام الفواتير</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-{# التعديل هنا: إضافة initial_theme إلى class للـ body #}
 <body class="{{ 'dark-mode' if initial_theme == 'dark' else '' }}">
+    
+    <!-- زر تبديل المظهر -->
+    <div class="theme-toggle-container">
+        <button id="theme-toggle" class="theme-toggle-btn standalone" title="تبديل الوضع الليلي">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- حاوية التسجيل -->
     <div class="container login-container">
         <div class="header">
             <h1><i class="fas fa-user-plus"></i> تسجيل مستخدم جديد</h1>
         </div>
 
+        <!-- رسائل الفلاش -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="flash-messages">
@@ -25,41 +36,201 @@
                         <div class="alert alert-{{ category }}">
                             {% if category == 'error' %}<i class="fas fa-times-circle"></i>{% endif %}
                             {% if category == 'info' %}<i class="fas fa-info-circle"></i>{% endif %}
-                            {{ message }}
+                            <span>{{ message }}</span>
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
 
+        <!-- نموذج التسجيل -->
         <form method="POST" class="auth-form">
             <div class="input-group">
-                <label for="username"><i class="fas fa-user"></i> اسم المستخدم:</label>
-                <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+                <label for="username">
+                    <i class="fas fa-user"></i>
+                    اسم المستخدم
+                </label>
+                <input type="text" 
+                       id="username" 
+                       name="username" 
+                       required 
+                       autocomplete="username" 
+                       autofocus
+                       placeholder="اختر اسم مستخدم">
             </div>
+
             <div class="input-group">
-                <label for="password"><i class="fas fa-lock"></i> كلمة المرور:</label>
+                <label for="password">
+                    <i class="fas fa-lock"></i>
+                    كلمة المرور
+                </label>
                 <div class="password-input-wrapper">
-                    <input type="password" id="password" name="password" required autocomplete="new-password">
-                    <button type="button" id="toggleRegisterPassword" class="password-toggle-btn" title="إظهار/إخفاء كلمة المرور">
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           required 
+                           autocomplete="new-password"
+                           placeholder="أدخل كلمة مرور قوية">
+                    <button type="button" 
+                            id="toggleRegisterPassword" 
+                            class="password-toggle-btn" 
+                            title="إظهار/إخفاء كلمة المرور">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
+
             <div class="input-group">
-                <label for="confirm_password"><i class="fas fa-lock"></i> تأكيد كلمة المرور:</label>
+                <label for="confirm_password">
+                    <i class="fas fa-check-circle"></i>
+                    تأكيد كلمة المرور
+                </label>
                 <div class="password-input-wrapper">
-                    <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password">
-                    <button type="button" id="toggleConfirmPassword" class="password-toggle-btn" title="إظهار/إخفاء كلمة المرور">
+                    <input type="password" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           required 
+                           autocomplete="new-password"
+                           placeholder="أعد إدخال كلمة المرور">
+                    <button type="button" 
+                            id="toggleConfirmPassword" 
+                            class="password-toggle-btn" 
+                            title="إظهار/إخفاء تأكيد كلمة المرور">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
-            <button type="submit" class="auth-button">تسجيل</button>
+
+            <button type="submit" class="auth-button">
+                <span><i class="fas fa-user-plus"></i> إنشاء حساب</span>
+            </button>
         </form>
-        <p class="auth-link-text">لديك حساب بالفعل؟ <a href="{{ url_for('login_page') }}" class="auth-link">سجل الدخول</a></p>
+
+        <!-- رابط تسجيل الدخول -->
+        <p class="auth-link-text">
+            لديك حساب بالفعل؟ 
+            <a href="{{ url_for('login_page') }}" class="auth-link">
+                <i class="fas fa-sign-in-alt"></i> سجل الدخول
+            </a>
+        </p>
     </div>
 
-    <script src="{{ url_for('static', filename='login_register_script.js') }}"></script>
+    <!-- السكريبت -->
+    <script>
+        // تحميل النص المحفوظ للمظهر
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+
+        // تطبيق المظهر المحفوظ
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+
+        // دالة تبديل المظهر
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // دوال إظهار/إخفاء كلمات المرور
+        function setupPasswordToggle(passwordFieldId, toggleButtonId) {
+            const passwordField = document.getElementById(passwordFieldId);
+            const toggleButton = document.getElementById(toggleButtonId);
+
+            if (passwordField && toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    
+                    const icon = toggleButton.querySelector('i');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            }
+        }
+
+        // إعداد أزرار إظهار/إخفاء كلمات المرور
+        setupPasswordToggle('password', 'toggleRegisterPassword');
+        setupPasswordToggle('confirm_password', 'toggleConfirmPassword');
+
+        // تحسين تجربة المستخدم
+        document.addEventListener('DOMContentLoaded', () => {
+            // تأثير تركيز تلقائي على أول حقل
+            const firstInput = document.querySelector('input[autofocus]');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+
+            // التحقق من تطابق كلمات المرور
+            const registerForm = document.querySelector('.auth-form');
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirm_password');
+
+            function checkPasswordMatch() {
+                if (passwordField.value && confirmPasswordField.value) {
+                    if (passwordField.value !== confirmPasswordField.value) {
+                        confirmPasswordField.style.borderColor = '#f56565';
+                        confirmPasswordField.style.boxShadow = '0 0 0 3px rgba(245, 101, 101, 0.2)';
+                    } else {
+                        confirmPasswordField.style.borderColor = '#48bb78';
+                        confirmPasswordField.style.boxShadow = '0 0 0 3px rgba(72, 187, 120, 0.2)';
+                    }
+                }
+            }
+
+            confirmPasswordField.addEventListener('input', checkPasswordMatch);
+            passwordField.addEventListener('input', checkPasswordMatch);
+
+            // منع إرسال النموذج إذا كانت كلمات المرور غير متطابقة
+            registerForm.addEventListener('submit', (event) => {
+                if (passwordField.value !== confirmPasswordField.value) {
+                    event.preventDefault();
+                    
+                    // إنشاء رسالة تحذير
+                    const existingAlert = document.querySelector('.password-mismatch-alert');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-error password-mismatch-alert';
+                    alertDiv.innerHTML = '<i class="fas fa-times-circle"></i><span>كلمة المرور وتأكيد كلمة المرور غير متطابقين!</span>';
+                    
+                    const flashMessages = document.querySelector('.flash-messages') || document.createElement('div');
+                    if (!document.querySelector('.flash-messages')) {
+                        flashMessages.className = 'flash-messages';
+                        registerForm.parentNode.insertBefore(flashMessages, registerForm);
+                    }
+                    
+                    flashMessages.appendChild(alertDiv);
+                    confirmPasswordField.focus();
+                }
+            });
+
+            // تحسين الانتقال بين الحقول بـ Enter
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach((input, index) => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && index < inputs.length - 1) {
+                        e.preventDefault();
+                        inputs[index + 1].focus();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
